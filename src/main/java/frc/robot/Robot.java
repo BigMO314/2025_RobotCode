@@ -33,6 +33,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {
 
         Chassis.init();
+        Elevator.init();
+        Manipulator.init();
+
         Teleoperated.init();
 
         DashboardManager.initSelectors();
@@ -45,6 +48,7 @@ public class Robot extends TimedRobot {
         Managers.update();
     
         Chassis.syncDashboardValues();
+        Elevator.syncDashboardValues();
         
     }
 

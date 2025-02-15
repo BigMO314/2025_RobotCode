@@ -117,6 +117,8 @@ public class Teleoperated {
         
     
         Chassis.periodic();
+        Elevator.periodic();
+        Manipulator.periodic();
     
     }
 
