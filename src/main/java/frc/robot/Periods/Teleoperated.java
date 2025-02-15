@@ -10,6 +10,8 @@ import frc.molib.dashboard.DashboardSelector;
 import frc.molib.hid.XboxController;
 import frc.robot.Robot;
 import frc.robot.Subsystems.Chassis;
+import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Manipulator;
 
 @SuppressWarnings("unused")
 public class Teleoperated {

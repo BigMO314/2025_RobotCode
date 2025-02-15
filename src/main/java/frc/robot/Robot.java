@@ -11,6 +11,8 @@ import frc.molib.Managers;
 import frc.molib.dashboard.DashboardManager;
 import frc.robot.Periods.Teleoperated;
 import frc.robot.Subsystems.Chassis;
+import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Manipulator;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
