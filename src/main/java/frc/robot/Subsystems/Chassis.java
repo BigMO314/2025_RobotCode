@@ -16,7 +16,7 @@ public class Chassis {
 
     private static NetworkTable tblChassis = Robot.tblSubsystems.getSubTable("Chassis");
 
-    private static NetworkTable tblDriveDistancePID = tblChassis.getSubTable("Drive Distance Pid");
+    private static NetworkTable tblDriveDistancePID = tblChassis.getSubTable("Drive Distance PID");
     private static NetworkTable tblDriveAnglePID = tblChassis.getSubTable("Drive Angle PID");
 
     private static DashboardValue<Double> dshDrive_Distance = new DashboardValue<Double>(tblChassis, "Distance");   

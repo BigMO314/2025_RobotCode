@@ -7,11 +7,13 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import frc.molib.Console;
 import frc.molib.Managers;
 import frc.molib.dashboard.DashboardManager;
+import frc.robot.Periods.Autonomous;
 import frc.robot.Periods.Teleoperated;
 import frc.robot.Subsystems.Chassis;
-import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.Manipulator;
 
 /**
@@ -34,10 +36,18 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
 
+        Console.logMsg("Waiting for NetworkTables Connection...");
+        //Wait for NetworkTables to Connect
+        Timer tmrNetworkTable = new Timer();
+        tmrNetworkTable.restart();
+        while(!NetworkTableInstance.getDefault().isConnected() && tmrNetworkTable.get() < 15.0);
+        if(!NetworkTableInstance.getDefault().isConnected())
+            Console.logErr("NetworkTables failed to connect! Dashboard objects may not work as intended!");
+
         Chassis.init();
-        Elevator.init();
         Manipulator.init();
 
+        Autonomous.init();
         Teleoperated.init();
 
         DashboardManager.initSelectors();
@@ -50,7 +60,7 @@ public class Robot extends TimedRobot {
         Managers.update();
     
         Chassis.syncDashboardValues();
-        Elevator.syncDashboardValues();
+       
         
     }
 

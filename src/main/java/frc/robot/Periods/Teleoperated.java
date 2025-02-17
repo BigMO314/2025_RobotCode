@@ -10,7 +10,6 @@ import frc.molib.dashboard.DashboardSelector;
 import frc.molib.hid.XboxController;
 import frc.robot.Robot;
 import frc.robot.Subsystems.Chassis;
-import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.Manipulator;
 
 @SuppressWarnings("unused")
@@ -122,12 +121,11 @@ public class Teleoperated {
         }
 
         if (btnOperate_Bottom.getPressed()){
-            Elevator.goToHeight(Elevator.Position.Bottom.getHeight());
+            Manipulator.goToHeight(Manipulator.Position.Bottom.getHeight());
         }
         
     
         Chassis.periodic();
-        Elevator.periodic();
         Manipulator.periodic();
     
     }

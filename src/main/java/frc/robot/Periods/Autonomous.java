@@ -7,9 +7,9 @@ import frc.molib.dashboard.DashboardOptionBase;
 import frc.molib.dashboard.DashboardSelector;
 import frc.robot.Robot;
 import frc.robot.Subsystems.Chassis;
-import frc.robot.Subsystems.Elevator;
 import frc.robot.Subsystems.Manipulator;
 
+@SuppressWarnings("unused")
 public class Autonomous {
 
     private enum StartingPosition implements DashboardOptionBase {
@@ -106,21 +106,15 @@ public class Autonomous {
     private static StartingDelay mSelectedStartingDelay = StartingDelay.DEFAULT;
     private static Sequence mSelectedSequence = Sequence.DEFAULT;
 
-    //unused constructer
+    /**unused constructor*/
     private Autonomous() {}
 
+    /**Called at robot startup */
     public static void init() {
-        Console.printHeader("Autonomous Initialization");
-
-        Console.logMsg("Initializing Dashboard Selectors");
-        dshStartingPosition.init();
-        dshStartingDelay.init();
-        dshSequence.init();
-
-
-        Console.logMsg("Autonomous Initialization Complete");
+        
     }
 
+    /**Called at start of Autonomous */
     public static void onEnable() {
         Console.printHeader("Autonomous Enabled");
 
@@ -138,12 +132,11 @@ public class Autonomous {
     }
 
 
-
+    /**Called to perform pre-programmed Sequences.*/
     public static void periodic() {
         mSelectedSequence.periodic();
 
         Chassis.periodic();
-        Elevator.periodic();
         Manipulator.periodic(); 
     }
 
