@@ -47,13 +47,30 @@ public class Autonomous {
         public double getTime() { return DELAY; }
     }
 
+    private enum ScoringPosition implements DashboardOptionBase {
+        L1("L1"),
+        L2("L2"),
+        L3("L3"),
+        L4("L4");
+
+        public static final ScoringPosition DEFAULT = L1;
+        
+        private final String LABEL;
+
+        private ScoringPosition(String label) { LABEL = label; }
+
+        public static String getTitle() { return "Scoring Position"; }
+        public String getLabel() { return LABEL; }
+
+    }
+
     private enum Sequence implements DashboardOptionBase {
 
         DO_NOTHING("Do Nothing") {
 
         },
         PREPARE_FOR_MATCH("Prepare For Match") {
-            @Override public void onEnable() {
+            @Override public void start() {
 
             }
         },
@@ -80,7 +97,7 @@ public class Autonomous {
         public String getLabel() { return LABEL; }
 
 
-        public void onEnable() {
+        public void start() {
             tmrStage.restart();
             mStage = 0;
         }
@@ -100,11 +117,13 @@ public class Autonomous {
     private static final DashboardSelector<StartingPosition> dshStartingPosition = new DashboardSelector<StartingPosition>(tblAutonomous, StartingPosition.getTitle(), StartingPosition.DEFAULT);
     private static final DashboardSelector<StartingDelay> dshStartingDelay = new DashboardSelector<StartingDelay>(tblAutonomous, StartingDelay.getTitle(), StartingDelay.DEFAULT);
     private static final DashboardSelector<Sequence> dshSequence = new DashboardSelector<Sequence>(tblAutonomous, Sequence.getTitle(), Sequence.DEFAULT);
+    private static final DashboardSelector<ScoringPosition> dshScoringPosition = new DashboardSelector<ScoringPosition>(tblAutonomous, ScoringPosition.getTitle(), ScoringPosition.DEFAULT);
 
     //Buffer Variables For Dashboard Selectors
     private static StartingPosition mSelectedStartingPosition = StartingPosition.DEFAULT;
     private static StartingDelay mSelectedStartingDelay = StartingDelay.DEFAULT;
     private static Sequence mSelectedSequence = Sequence.DEFAULT;
+    private static ScoringPosition mSelectedScoringPosition = ScoringPosition.DEFAULT;
 
     /**unused constructor*/
     private Autonomous() {}
@@ -123,10 +142,11 @@ public class Autonomous {
         mSelectedStartingPosition = dshStartingPosition.get();
         mSelectedStartingDelay = dshStartingDelay.get(); 
         mSelectedSequence = dshSequence.get();
+        mSelectedScoringPosition = dshScoringPosition.get();
 
 
         //onEnable setup for selected sequence
-        mSelectedSequence.onEnable();
+        mSelectedSequence.start();
 
         Console.printSeparator();
     }
