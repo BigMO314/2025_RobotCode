@@ -10,6 +10,8 @@ import frc.molib.dashboard.DashboardSelector;
 import frc.molib.hid.XboxController;
 import frc.robot.Robot;
 import frc.robot.Subsystems.Chassis;
+import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Manipulator;
 
 @SuppressWarnings("unused")
 public class Teleoperated {
@@ -53,6 +55,10 @@ public class Teleoperated {
 
     private static Button btnDrive_Brake = new Button() {
         @Override public boolean get() { return ctlDrive.getRightBumperButton(); }
+    };
+
+    private static Button btnOperate_Bottom = new Button() {
+        @Override public boolean get() { return ctlOperate.getAButton(); }
     };
 
     public static void start(){
@@ -114,9 +120,15 @@ public class Teleoperated {
         }else if(btnDrive_Brake.getReleased()){
             Chassis.setNeutralMode(NeutralModeValue.Brake);
         }
+
+        if (btnOperate_Bottom.getPressed()){
+            Elevator.goToHeight(Elevator.Position.Bottom.getHeight());
+        }
         
     
         Chassis.periodic();
+        Elevator.periodic();
+        Manipulator.periodic();
     
     }
 

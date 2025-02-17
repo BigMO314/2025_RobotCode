@@ -11,6 +11,8 @@ import frc.molib.Managers;
 import frc.molib.dashboard.DashboardManager;
 import frc.robot.Periods.Teleoperated;
 import frc.robot.Subsystems.Chassis;
+import frc.robot.Subsystems.Elevator;
+import frc.robot.Subsystems.Manipulator;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -33,6 +35,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {
 
         Chassis.init();
+        Elevator.init();
+        Manipulator.init();
+
         Teleoperated.init();
 
         DashboardManager.initSelectors();
@@ -45,6 +50,7 @@ public class Robot extends TimedRobot {
         Managers.update();
     
         Chassis.syncDashboardValues();
+        Elevator.syncDashboardValues();
         
     }
 
