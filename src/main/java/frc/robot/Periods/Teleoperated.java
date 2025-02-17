@@ -57,6 +57,10 @@ public class Teleoperated {
         @Override public boolean get() { return ctlDrive.getRightBumperButton(); }
     };
 
+    private static Button btnOperate_Bottom = new Button() {
+        @Override public boolean get() { return ctlOperate.getAButton(); }
+    };
+
     public static void start(){
 
         ctlDrive.configYAxisInverted(true);
@@ -115,6 +119,10 @@ public class Teleoperated {
             Chassis.setNeutralMode(NeutralModeValue.Brake);
         }else if(btnDrive_Brake.getReleased()){
             Chassis.setNeutralMode(NeutralModeValue.Brake);
+        }
+
+        if (btnOperate_Bottom.getPressed()){
+            Elevator.goToHeight(Elevator.Position.Bottom.getHeight());
         }
         
     

@@ -12,6 +12,19 @@ import frc.robot.Robot;
 
 @SuppressWarnings("unused")
 public class Elevator {
+
+    public enum Position{
+        Bottom(0.0),
+        L1(0.0),
+        L2(0.0),
+        L3(0.0),
+        L4(0.0);
+
+        private final double HEIGHT;
+        private Position(double height) { HEIGHT = height; }
+        public double getHeight() { return HEIGHT; }
+
+    }
     
     private static NetworkTable tblElevator = Robot.tblSubsystems.getSubTable("Elevator");
 
