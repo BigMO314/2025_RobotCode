@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -27,6 +29,7 @@ public class Robot extends TimedRobot {
     public static NetworkTable tblPeriods = tblMain.getSubTable("Periods");
     public static NetworkTable tblSubsystems = tblMain.getSubTable("Subsystems");
 
+    private static UsbCamera camMain;
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -43,6 +46,15 @@ public class Robot extends TimedRobot {
         while(!NetworkTableInstance.getDefault().isConnected() && tmrNetworkTable.get() < 15.0);
         if(!NetworkTableInstance.getDefault().isConnected())
             Console.logErr("NetworkTables failed to connect! Dashboard objects may not work as intended!");
+
+         try{
+            camMain = CameraServer.startAutomaticCapture("Main Camera", 0);
+            camMain.setFPS(15);
+            camMain.setResolution(128, 80);
+            camMain.setBrightness(50);
+        } finally {
+            //Just ignore camera if it fails
+        }
 
         Chassis.init();
         Manipulator.init();
