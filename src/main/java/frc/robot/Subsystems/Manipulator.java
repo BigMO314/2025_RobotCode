@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.NetworkTable;
+import frc.molib.Console;
 import frc.molib.PIDController;
 import frc.molib.dashboard.DashboardValue;
 import frc.robot.Robot;
@@ -62,8 +63,9 @@ public class Manipulator {
 
     /** Called at robot startup */
     public static void init(){
+        Console.printHeader("Initializing Manipulator");
 
-
+        Console.logMsg("Configurating Motors");
         mtrElevator.getConfigurator().apply(new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake)
@@ -72,10 +74,13 @@ public class Manipulator {
         mtrManipulator_L.setInverted(true);
         mtrManipulator_R.setInverted(false);
 
+        Console.logMsg("Initializing Dashboard Values");
         dshElevator_Height_P.set(pidElevatorHeight.getP());
         dshElevator_Height_I.set(pidElevatorHeight.getI());
         dshElevator_Height_D.set(pidElevatorHeight.getD());
 
+
+        Console.logMsg("Manipulator Initualization Complete!");
     }
 
     /**
@@ -153,6 +158,18 @@ public class Manipulator {
     
     }
 
+    public static void lowerElevator(){
+
+        setElevatorPower(-0.1);
+
+    }
+
+    public static void raiseElevator(){
+
+        setElevatorPower(0.5);
+
+    }
+
     /**Sets Manipulator Power */
     public static void setManipulatorPower(double power){
     
@@ -160,6 +177,11 @@ public class Manipulator {
     
     }
 
+    public static void enableManipulator() {
+
+        setManipulatorPower(1.0);
+
+    }
     
     public static void periodic(){
 

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import frc.molib.PIDController;
+import frc.molib.Console;
 import frc.molib.dashboard.DashboardValue;
 import frc.robot.Robot;
 
@@ -54,7 +55,9 @@ public class Chassis {
     private Chassis(){}
 
     public static void init(){
-        
+        Console.printHeader("Initializing Chassis");
+
+        Console.logMsg("Configuring Motors...");
         mtrDrive_L1.getConfigurator().apply(new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
@@ -68,6 +71,16 @@ public class Chassis {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
 
+
+        Console.logMsg("Calibrating Gyro");
+        gyrDrive.calibrate();
+            
+
+        Console.logMsg("Resetting Sensor Values");
+        resetAngle();
+        resetDistance();
+
+        Console.logMsg("Configuring PIDs...");
         dshDrive_Distance_P.set(pidDriveDistance.getP());
         dshDrive_Distance_I.set(pidDriveDistance.getI());
         dshDrive_Distance_D.set(pidDriveDistance.getD());
@@ -76,7 +89,7 @@ public class Chassis {
         dshDrive_Angle_I.set(pidDriveAngle.getI());
         dshDrive_Angle_D.set(pidDriveAngle.getD());
     
-
+        Console.logMsg("Chassis Initialization Complete!");
     }
 
     public static void syncDashboardValues(){
@@ -123,6 +136,9 @@ public class Chassis {
         return mtrDrive_L1.getPosition().getValueAsDouble() * WHEEL_DIAMETER * GEAR_RATIO * Math.PI;
         
     }
+
+    public static void resetAngle() { gyrDrive.reset(); }
+    public static void resetDistance() { mtrDrive_L1.setPosition(0.0); }
 
     public static Double getAngle(){
         return gyrDrive.getAngle();
