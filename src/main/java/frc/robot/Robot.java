@@ -14,7 +14,9 @@ import frc.molib.Console;
 import frc.molib.Managers;
 import frc.molib.dashboard.DashboardManager;
 import frc.robot.Periods.Autonomous;
+import frc.robot.Periods.Disabled;
 import frc.robot.Periods.Teleoperated;
+import frc.robot.Periods.Test;
 import frc.robot.Subsystems.Chassis;
 import frc.robot.Subsystems.Manipulator;
 
@@ -84,10 +86,14 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void autonomousInit() {}
+    public void autonomousInit() {
+        Autonomous.init();
+    }
 
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        Autonomous.periodic();
+    }
 
     @Override
     public void teleopInit() {
@@ -100,16 +106,24 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        Disabled.init();
+    }
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        Disabled.periodic();
+    }
 
     @Override
-    public void testInit() {}
+    public void testInit() {
+        Test.init();
+    }
 
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        Test.periodic();
+    }
 
     @Override
     public void simulationInit() {}
