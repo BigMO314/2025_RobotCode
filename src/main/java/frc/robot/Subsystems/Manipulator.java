@@ -182,6 +182,12 @@ public class Manipulator {
         setManipulatorPower(1.0);
 
     }
+
+    public static void reverseManipulator(){
+
+        setManipulatorPower(-0.5);
+
+    }
     
     public static void periodic(){
 

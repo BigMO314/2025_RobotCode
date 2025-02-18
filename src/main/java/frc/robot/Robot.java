@@ -66,6 +66,13 @@ public class Robot extends TimedRobot {
 
     }
 
+    public static void disableSubsystems(){
+
+        Manipulator.disable();
+        Chassis.disable();
+
+    }
+
     @Override
     public void robotPeriodic() {
 
