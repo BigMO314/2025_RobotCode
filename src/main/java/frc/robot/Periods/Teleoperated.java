@@ -57,9 +57,40 @@ public class Teleoperated {
     };
 
     private static Button btnOperate_Bottom = new Button() {
+        @Override public boolean get() { return ctlOperate.getLeftBumperButton(); }
+    };
+
+    private static Button btnOperate_L1 = new Button() {
         @Override public boolean get() { return ctlOperate.getAButton(); }
     };
 
+    private static Button btnOperate_L2 = new Button() {
+        @Override public boolean get() {return ctlOperate.getBButton(); }
+    };
+
+    private static Button btnOperate_L3 = new Button() {
+        @Override public boolean get() {return ctlOperate.getXButton(); }
+    };
+
+    private static Button btnOperate_L4 = new Button() {
+        @Override public boolean get() {return ctlOperate.getYButton(); }
+    };
+
+    private static Button btnOperate_Dispense = new Button() {
+        @Override public boolean get() {return ctlOperate.getRightTrigger(); }
+    };
+
+    private static Button btnOperate_ReverseDispense = new Button() {
+        @Override public boolean get() {return ctlOperate.getLeftTrigger(); }
+    };
+
+    private static Button btnOperate_manualUp = new Button() {
+        @Override public boolean get() { return ctlOperate.getPOV() == 90; }
+    };
+
+    private static Button btnOperate_manualDown = new Button(){
+        @Override public boolean get() { return ctlOperate.getPOV() == 180; }
+    };
     public static void start(){
 
         ctlDrive.configYAxisInverted(true);
@@ -122,6 +153,20 @@ public class Teleoperated {
 
         if (btnOperate_Bottom.getPressed()){
             Manipulator.goToHeight(Manipulator.Position.Bottom.getHeight());
+        }else if(btnOperate_L1.getPressed()){
+            Manipulator.goToHeight(Manipulator.Position.L1.getHeight());
+        }else if(btnOperate_L2.getPressed()){
+            Manipulator.goToHeight(Manipulator.Position.L2.getHeight());
+        }else if(btnOperate_L3.getPressed()){
+            Manipulator.goToHeight(Manipulator.Position.L3.getHeight());
+        }else if(btnOperate_L4.getPressed()){
+            Manipulator.goToHeight(Manipulator.Position.L4.getHeight());
+        }else if(btnOperate_manualUp.get()){
+            Manipulator.disableElevatorPID();
+            Manipulator.raiseElevator();
+        }else if(btnOperate_manualDown.get()){
+            Manipulator.disableElevatorPID();
+            Manipulator.lowerElevator();
         }
         
     
