@@ -47,23 +47,6 @@ public class Autonomous {
         public double getTime() { return DELAY; }
     }
 
-    private enum ScoringPosition implements DashboardOptionBase {
-        L1("L1"),
-        L2("L2"),
-        L3("L3"),
-        L4("L4");
-
-        public static final ScoringPosition DEFAULT = L1;
-        
-        private final String LABEL;
-
-        private ScoringPosition(String label) { LABEL = label; }
-
-        public static String getTitle() { return "Scoring Position"; }
-        public String getLabel() { return LABEL; }
-
-    }
-
     private enum Sequence implements DashboardOptionBase {
 
         DO_NOTHING("Do Nothing") {
@@ -237,7 +220,7 @@ public class Autonomous {
     
         private Sequence(String label) {LABEL = label;}
     
-        public static String getTitle() { return "Starting Position"; }
+        public static String getTitle() { return "Sequence"; }
         public String getLabel() { return LABEL; }
 
 
@@ -261,13 +244,13 @@ public class Autonomous {
     private static final DashboardSelector<StartingPosition> dshStartingPosition = new DashboardSelector<StartingPosition>(tblAutonomous, StartingPosition.getTitle(), StartingPosition.DEFAULT);
     private static final DashboardSelector<StartingDelay> dshStartingDelay = new DashboardSelector<StartingDelay>(tblAutonomous, StartingDelay.getTitle(), StartingDelay.DEFAULT);
     private static final DashboardSelector<Sequence> dshSequence = new DashboardSelector<Sequence>(tblAutonomous, Sequence.getTitle(), Sequence.DEFAULT);
-    private static final DashboardSelector<ScoringPosition> dshScoringPosition = new DashboardSelector<ScoringPosition>(tblAutonomous, ScoringPosition.getTitle(), ScoringPosition.DEFAULT);
+    private static final DashboardSelector<Manipulator.Position> dshScoringPosition = new DashboardSelector<Manipulator.Position>(tblAutonomous, Manipulator.Position.getTitle(), Manipulator.Position.DEFAULT);
 
     //Buffer Variables For Dashboard Selectors
     private static StartingPosition mSelectedStartingPosition = StartingPosition.DEFAULT;
     private static StartingDelay mSelectedStartingDelay = StartingDelay.DEFAULT;
     private static Sequence mSelectedSequence = Sequence.DEFAULT;
-    private static ScoringPosition mSelectedScoringPosition = ScoringPosition.DEFAULT;
+    private static Manipulator.Position mSelectedScoringPosition = Manipulator.Position.DEFAULT;
 
     /**unused constructor*/
     private Autonomous() {}

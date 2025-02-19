@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.networktables.NetworkTable;
 import frc.molib.Console;
 import frc.molib.PIDController;
+import frc.molib.dashboard.DashboardOptionBase;
 import frc.molib.dashboard.DashboardValue;
 import frc.robot.Robot;
 
@@ -17,16 +18,28 @@ import frc.robot.Robot;
 public class Manipulator {
     
     /**Positions for elevator to score*/
-    public enum Position{
-        Bottom(0.0),
-        L1(0.0),
-        L2(0.0),
-        L3(0.0),
-        L4(0.0);
+    public enum Position implements DashboardOptionBase{
+        Bottom("Bottom", 0.0),
+        L1("L1", 0.0),
+        L2("L2", 0.0),
+        L3("L3", 0.0),
+        L4("L4", 0.0);
+
+        public static final Position DEFAULT = L1;
+        
+        private final String LABEL;
 
         private final double HEIGHT;
-        private Position(double height) { HEIGHT = height; }
+        private Position(String label, double height) { 
+        
+            LABEL = label;
+            HEIGHT = height; 
+        
+        }
         public double getHeight() { return HEIGHT; }
+
+        public static String getTitle() { return "Scoring Position"; }
+        public String getLabel() { return LABEL; }
 
     }
 
