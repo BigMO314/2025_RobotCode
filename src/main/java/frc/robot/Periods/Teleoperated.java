@@ -47,7 +47,7 @@ public class Teleoperated {
 
     private static final DriveExponent mSelectedDriveExponent = DriveExponent.NONE;
 
-    private static final double DRIVE_POWER = 0.2;
+    private static final double DRIVE_POWER = 0.5;
 
     private static XboxController ctlDrive = new XboxController(0);
     private static XboxController ctlOperate = new XboxController(1);
@@ -85,7 +85,7 @@ public class Teleoperated {
     };
 
     private static Button btnOperate_manualUp = new Button() {
-        @Override public boolean get() { return ctlOperate.getPOV() == 90; }
+        @Override public boolean get() { return ctlOperate.getPOV() == 0; }
     };
 
     private static Button btnOperate_manualDown = new Button(){
@@ -148,7 +148,7 @@ public class Teleoperated {
         if (btnDrive_Brake.getPressed()){
             Chassis.setNeutralMode(NeutralModeValue.Brake);
         }else if(btnDrive_Brake.getReleased()){
-            Chassis.setNeutralMode(NeutralModeValue.Brake);
+            Chassis.setNeutralMode(NeutralModeValue.Coast);
         }
 
         if (btnOperate_Bottom.getPressed()){

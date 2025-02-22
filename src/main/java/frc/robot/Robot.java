@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
         if(!NetworkTableInstance.getDefault().isConnected())
             Console.logErr("NetworkTables failed to connect! Dashboard objects may not work as intended!");
 
+            
          try{
             camMain = CameraServer.startAutomaticCapture("Main Camera", 0);
             camMain.setFPS(15);
