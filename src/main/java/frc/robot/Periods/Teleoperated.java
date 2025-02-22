@@ -167,6 +167,10 @@ public class Teleoperated {
         }else if(btnOperate_manualDown.get()){
             Manipulator.disableElevatorPID();
             Manipulator.lowerElevator();
+        }else if(btnOperate_Dispense.get()){
+            Manipulator.enableWheels();
+        }else if(btnOperate_ReverseDispense.get()){
+            Manipulator.reverseWheels();
         }
         
     
