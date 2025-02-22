@@ -171,12 +171,14 @@ public class Manipulator {
     
     }
 
+    /**Lowers Elevator */
     public static void lowerElevator(){
 
         setElevatorPower(-0.1);
 
     }
 
+    /**Raises Elevator */
     public static void raiseElevator(){
 
         setElevatorPower(0.5);
@@ -190,12 +192,14 @@ public class Manipulator {
     
     }
 
+    /**Enables Manipulator Wheels */
     public static void enableWheels() {
 
         setWheelsPower(1.0);
 
     }
 
+    /**Reverses Manipulator Wheels */
     public static void reverseWheels(){
 
         setWheelsPower(-0.5);

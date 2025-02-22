@@ -9,7 +9,9 @@ import frc.robot.Robot;
 import frc.robot.Subsystems.Chassis;
 import frc.robot.Subsystems.Manipulator;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("")
+
+/**Controls the robot through pre programmed sequences during the Autonomous game period */
 public class Autonomous {
 
     private enum StartingPosition implements DashboardOptionBase {
@@ -196,10 +198,11 @@ public class Autonomous {
     
         private Sequence(String label) {LABEL = label;}
     
+        /**Returns the title of this sector */
         public static String getTitle() { return "Sequence"; }
         public String getLabel() { return LABEL; }
 
-
+        /**Call once at the start of autonomous to prepare each sequence */
         public void start() {
             tmrStage.restart();
             mStage = 0;
@@ -211,8 +214,6 @@ public class Autonomous {
     }
 
     
-   
-
     //Network Tables
     private static final NetworkTable tblAutonomous = Robot.tblPeriods.getSubTable("Autonomous");
 
