@@ -57,8 +57,8 @@ public class Manipulator {
 
     //Motors
     private static TalonFX mtrElevator = new TalonFX(5);
-    private static VictorSPX mtrManipulator_L = new VictorSPX(6);
-    private static VictorSPX mtrManipulator_R = new VictorSPX(7);
+    private static VictorSPX mtrWheel_L = new VictorSPX(6);
+    private static VictorSPX mtrWheel_R = new VictorSPX(7);
 
     //PID Controller
     private static PIDController pidElevatorHeight = new PIDController(0.0, 0.0, 0.0);
@@ -84,8 +84,8 @@ public class Manipulator {
             .withNeutralMode(NeutralModeValue.Brake)
             );
 
-        mtrManipulator_L.setInverted(true);
-        mtrManipulator_R.setInverted(false);
+        mtrWheel_L.setInverted(true);
+        mtrWheel_R.setInverted(false);
 
         Console.logMsg("Initializing Dashboard Values");
         dshElevator_Height_P.set(pidElevatorHeight.getP());
@@ -112,7 +112,7 @@ public class Manipulator {
     public static void disable(){
 
         setElevatorPower(0.0);
-        setManipulatorPower(0.0);
+        setWheelsPower(0.0);
         disableElevatorPID();
 
     }
@@ -126,9 +126,9 @@ public class Manipulator {
     }
 
     /**Disables Manipulator power*/
-    public static void disableManipulator(){
+    public static void disableWheels(){
 
-        setManipulatorPower(0.0);
+        setWheelsPower(0.0);
 
     }
 
@@ -184,21 +184,21 @@ public class Manipulator {
     }
 
     /**Sets Manipulator Power */
-    public static void setManipulatorPower(double power){
+    public static void setWheelsPower(double power){
     
         mPower = power;
     
     }
 
-    public static void enableManipulator() {
+    public static void enableWheels() {
 
-        setManipulatorPower(1.0);
+        setWheelsPower(1.0);
 
     }
 
-    public static void reverseManipulator(){
+    public static void reverseWheels(){
 
-        setManipulatorPower(-0.5);
+        setWheelsPower(-0.5);
 
     }
     
@@ -209,8 +209,8 @@ public class Manipulator {
         }
 
         mtrElevator.set(mElevatorPower);
-        mtrManipulator_L.set(ControlMode.PercentOutput, mPower);
-        mtrManipulator_R.set(ControlMode.PercentOutput, mPower);
+        mtrWheel_L.set(ControlMode.PercentOutput, mPower);
+        mtrWheel_R.set(ControlMode.PercentOutput, mPower);
 
 
     }

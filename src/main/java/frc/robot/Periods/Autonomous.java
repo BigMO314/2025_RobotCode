@@ -60,9 +60,12 @@ public class Autonomous {
                         Manipulator.lowerElevator();
                         tmrStage.reset();
                         mStage++;
+                    case 1:
+                        Console.logMsg("Auton Finished!");
+                        mStage++;
                     default:
-                        if(tmrStage.get() >= 3.0)mStage++;
-                        break;
+                        Manipulator.disableWheels();
+                        Chassis.disable();
                 }
             }
         },
@@ -75,7 +78,7 @@ public class Autonomous {
                         tmrStage.reset();
                         mStage++;
                     case 1:
-                        if(tmrStage.get() >= mSelectedStartingDelay.getTime())mStage++;
+                        if(tmrStage.get() >= mSelectedStartingDelay.getTime()) mStage++;
                         break;
                     case 2:
                         Console.logMsg("Driving forward...");
@@ -85,7 +88,7 @@ public class Autonomous {
                         tmrStage.reset();
                         mStage++;
                     case 3:
-                        if(tmrStage.get() >= 5.0 ||Chassis.isAtDistance())mStage++;
+                        if(tmrStage.get() >= 5.0 ||Chassis.isAtDistance()) mStage++;
                         break;
                     default:
                         Console.logMsg("Done Driving Foward!");
@@ -97,7 +100,7 @@ public class Autonomous {
             @Override public void periodic() {
                 switch(mStage) {
                     case 0: 
-                        Console.logMsg("Zeroing Elevator. Delaying other actions...");
+                        Console.logMsg("Zeroing Elevator...");
                         Manipulator.lowerElevator();
                         tmrStage.reset();
                         mStage++;
@@ -115,102 +118,75 @@ public class Autonomous {
                         if(tmrStage.get() >= 3.0 || Chassis.isAtDistance()) mStage++;
                         break;
                     case 4:
-                        Manipulator.goToHeight(12.0);
+                        Console.logMsg("Raising Elevator to Scoring Position...");
+                        Manipulator.goToHeight(mSelectedScoringPosition.getHeight());
                         tmrStage.reset();
                         mStage++;
                     case 5:
-                        if(tmrStage.get() >= 3.0 || Manipulator.isAtHeight())mStage++;
+                        if(tmrStage.get() >= 3.0 || Manipulator.isAtHeight()) mStage++;
                         break;
                     case 6:
-                        Manipulator.enableManipulator();
+                        Console.logMsg("Enabling Manipulator...");
+                    	Manipulator.enableWheels();
                         tmrStage.reset();
                         mStage++;
                     case 7:
-                    if(tmrStage.get() >= 1.0)mStage++;
-                    break;
+                        if(tmrStage.get() >= 1.0) mStage++;
+                        break;
+                    case 8:
+                        Console.logMsg("Auton Finished!");
+                        mStage++;
                     default:
                         Robot.disableSubsystems();
                 }
             }
         },
-        RIGHT_SCORE("Right Score") {
+        SIDE_SCORE("Side Score") {
             @Override public void periodic() {
                 switch (mStage) {
                     case 0:
+                        Console.logMsg("Zeroing Elevator...");
                         Manipulator.lowerElevator();
                         tmrStage.reset();
                         mStage++;
                     case 1:
-                        if(tmrStage.get() >= 3.0)mStage++;
+                        if(tmrStage.get() >= 3.0) mStage++;
                         break;
                     case 2:
+                        Console.logMsg("Driving Foward...");
                         Chassis.disableAnglePID();
                         Chassis.resetDistance();
                         Chassis.goToDistance(60.0);
                         tmrStage.reset();
                         mStage++;
                     case 3:
-                        if(tmrStage.get() >= 3.0 || Chassis.isAtDistance())mStage++;
+                        if(tmrStage.get() >= 3.0 || Chassis.isAtDistance()) mStage++;
                         break;
                     case 4:
-                        Manipulator.goToHeight(12.0);
+                        Console.logMsg("Raising Elevator to Scoring Height...");
+                        Manipulator.goToHeight(mSelectedScoringPosition.getHeight());
                         tmrStage.reset();
                         mStage++;
                     case 5:
-                        if(tmrStage.get() >= 4.0 || Manipulator.isAtHeight())mStage++;
+                        if(tmrStage.get() >= 4.0 || Manipulator.isAtHeight()) mStage++;
                         break;
                     case 6:
-                        Manipulator.enableManipulator();
+                        Console.logMsg("Enabling Manipulator...");
+                        Manipulator.enableWheels();
                         tmrStage.reset();
                         mStage++;
                     case 7:
-                        if(tmrStage.get() >= 1.0)mStage++;
+                        if(tmrStage.get() >= 1.0) mStage++;
                         break;
+                    case 8:
+                        Console.logMsg("Auton Finished!");
+                        mStage++;
                     default:
                         Robot.disableSubsystems();
                 } 
             }
-        },
-        LEFT_SCORE("Left Score") {
-            @Override public void periodic() {
-                switch (mStage) {
-                    case 0:
-                        Manipulator.lowerElevator();
-                        tmrStage.reset();
-                        mStage++;
-                    case 1:
-                        if(tmrStage.get() >= 3.0)mStage++;
-                        break;
-                    case 2:
-                        Chassis.disableAnglePID();
-                        Chassis.resetDistance();
-                        Chassis.goToDistance(60.0);
-                        tmrStage.reset();
-                        mStage++;
-                    case 3:
-                        if(tmrStage.get() >= 4.0 || Chassis.isAtDistance())mStage++;
-                        break;
-                    case 4:
-                        Manipulator.goToHeight(12.0);
-                        tmrStage.reset();
-                        mStage++;
-                    case 5:
-                        if(tmrStage.get() >= 4.0 || Manipulator.isAtHeight())mStage++;
-                        break;
-                    case 6:
-                        Manipulator.enableManipulator();
-                        tmrStage.reset();
-                        mStage++;
-                    case 7:
-                        if(tmrStage.get() >= 1.0)mStage++;
-                        break;
-                    default:
-                        Robot.disableSubsystems();
-                }
-            }
         };
-        
-
+    
 
         private static final Timer tmrStage = new Timer();
         public static final Sequence DEFAULT = PREPARE_FOR_MATCH;
@@ -271,6 +247,10 @@ public class Autonomous {
         mSelectedSequence = dshSequence.get();
         mSelectedScoringPosition = dshScoringPosition.get();
 
+        Console.logMsg("Sequence: " + mSelectedSequence.getLabel());
+        Console.logMsg("Delay: " + mSelectedStartingDelay.getLabel());
+        Console.logMsg("Start Position: " + mSelectedStartingPosition.getLabel());
+        Console.logMsg("Scoring Position:" + mSelectedScoringPosition.getLabel());
 
         //onEnable setup for selected sequence
         mSelectedSequence.start();
