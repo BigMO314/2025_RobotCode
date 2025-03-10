@@ -50,6 +50,8 @@ public class Teleoperated {
 
     private static final double DRIVE_POWER = 0.75;
 
+    private static final double PRECISION_POWER = 0.2;
+
     private static XboxController ctlDrive = new XboxController(0);
     private static XboxController ctlOperate = new XboxController(1);
 
@@ -131,7 +133,7 @@ public class Teleoperated {
 
     }
 
-    public static double processDriverInput(double value){
+    public static double processDriverInput(double value, double scale){
 
         if(mSelectedDriveExponent == DriveExponent.SQUARED){
             value = value*value*Math.signum(value);
@@ -143,7 +145,7 @@ public class Teleoperated {
 
     }
 
-    private static void setTankDrive(double left, double right){
+    private static void setTankDrive(double left, double right, double scale){
 
         Chassis.setDrivePower(left, right);
 
@@ -161,12 +163,14 @@ public class Teleoperated {
     }
 
     public static void periodic(){
+        double drivePower = btnDrive_Brake.get() ? PRECISION_POWER : DRIVE_POWER;
+
         if(mSelectedDriveStyle == DriveStyle.TANK_DRIVE){
-            setTankDrive(processDriverInput(ctlDrive.getLeftY()), processDriverInput(ctlDrive.getRightY()));
+            setTankDrive(processDriverInput(ctlDrive.getLeftY(), drivePower), processDriverInput(ctlDrive.getRightY(), drivePower), drivePower);
         }else if (mSelectedDriveStyle == DriveStyle.ARCADE_DRIVE){
-            setArcadeDrive(processDriverInput(ctlDrive.getLeftY()), processDriverInput(ctlDrive.getLeftX()));
+            setArcadeDrive(processDriverInput(ctlDrive.getLeftY(), drivePower), processDriverInput(ctlDrive.getLeftX(), drivePower), drivePower);
         }else if(mSelectedDriveStyle == DriveStyle.CHEEZY_DRIVE){
-            setArcadeDrive(processDriverInput(ctlDrive.getLeftY()), processDriverInput(ctlDrive.getRightX()));
+            setArcadeDrive(processDriverInput(ctlDrive.getLeftY(), drivePower), processDriverInput(ctlDrive.getRightX(), drivePower), drivePower);
         }
 
         if (btnDrive_Brake.getPressed()){
