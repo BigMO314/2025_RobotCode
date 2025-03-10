@@ -1,5 +1,8 @@
 package frc.robot.Periods;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Timer;
 import frc.molib.Console;
@@ -58,15 +61,15 @@ public class Autonomous {
             @Override public void start() {
                 switch (mStage) {
                     case 0:
-                        Console.logMsg("Lowering Manipulator");
-                        Manipulator.lowerElevator();
                         tmrStage.reset();
                         mStage++;
                     case 1:
+                        if(tmrStage.get() >= mSelectedStartingDelay.getTime()) mStage++;
+                        break;
+                    case 2:
                         Console.logMsg("Auton Finished!");
                         mStage++;
                     default:
-                        Manipulator.disableWheels();
                         Chassis.disable();
                 }
             }
@@ -152,7 +155,7 @@ public class Autonomous {
                         tmrStage.reset();
                         mStage++;
                     case 1:
-                        if(tmrStage.get() >= 3.0) mStage++;
+                        if(tmrStage.get() >= mSelectedStartingDelay.getTime()) mStage++;
                         break;
                     case 2:
                         Console.logMsg("Driving Foward...");
@@ -187,6 +190,31 @@ public class Autonomous {
                         Robot.disableSubsystems();
                 } 
             }
+        },
+        TIMED_DRIVE_FOWARD("Timed Drive Foward") {
+            @Override public void periodic() {
+                switch(mStage) {
+                    case 0:
+                    tmrStage.reset();
+                    mStage++;
+                    case 1:
+                    if(tmrStage.get() >= mSelectedStartingDelay.getTime()) mStage++;
+                    break;
+                    case 2:
+                    Console.logMsg("Driving Foward...");
+                    Chassis.setDrivePower(0.5, 0.5);
+                    tmrStage.reset();
+                    mStage++;
+                    case 3:
+                    if(tmrStage.get() >= 1.0) mStage++;
+                    break;
+                    case 4:
+                    Console.logMsg("Auton Finished!");
+                    mStage++;
+                    default:
+                    Robot.disableSubsystems();
+                }
+            }
         };
     
 
@@ -213,7 +241,7 @@ public class Autonomous {
 
     }
 
-    
+
     //Network Tables
     private static final NetworkTable tblAutonomous = Robot.tblPeriods.getSubTable("Autonomous");
 
@@ -238,7 +266,7 @@ public class Autonomous {
     }
 
     /**Called at start of Autonomous */
-    public static void onEnable() {
+    public static void start() {
         Console.printHeader("Autonomous Enabled");
 
 
@@ -253,6 +281,8 @@ public class Autonomous {
         Console.logMsg("Start Position: " + mSelectedStartingPosition.getLabel());
         Console.logMsg("Scoring Position:" + mSelectedScoringPosition.getLabel());
 
+        Chassis.setNeutralMode(NeutralModeValue.Brake);
+
         //onEnable setup for selected sequence
         mSelectedSequence.start();
 
@@ -265,7 +295,7 @@ public class Autonomous {
         mSelectedSequence.periodic();
 
         Chassis.periodic();
-        Manipulator.periodic(); 
+        //Manipulator.periodic(); 
     }
 
 }

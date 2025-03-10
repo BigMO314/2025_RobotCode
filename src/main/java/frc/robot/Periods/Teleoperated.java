@@ -9,6 +9,7 @@ import frc.molib.dashboard.DashboardOptionBase;
 import frc.molib.dashboard.DashboardSelector;
 import frc.molib.hid.XboxController;
 import frc.robot.Robot;
+import frc.robot.Subsystems.Algae_Mech;
 import frc.robot.Subsystems.Chassis;
 import frc.robot.Subsystems.Manipulator;
 
@@ -22,7 +23,7 @@ public class Teleoperated {
         CHEEZY_DRIVE("Cheesy");
 
         public static final String getKey() { return "Drive Style"; }
-        public static final DriveStyle getDefaultOption() { return TANK_DRIVE; }
+        public static final DriveStyle getDefaultOption() { return CHEEZY_DRIVE; }
 
         private final String label;
 
@@ -45,9 +46,9 @@ public class Teleoperated {
 
     private static DriveStyle mSelectedDriveStyle = DriveStyle.getDefaultOption();
 
-    private static final DriveExponent mSelectedDriveExponent = DriveExponent.NONE;
+    private static final DriveExponent mSelectedDriveExponent = DriveExponent.CUBED;
 
-    private static final double DRIVE_POWER = 0.5;
+    private static final double DRIVE_POWER = 0.75;
 
     private static XboxController ctlDrive = new XboxController(0);
     private static XboxController ctlOperate = new XboxController(1);
@@ -56,41 +57,62 @@ public class Teleoperated {
         @Override public boolean get() { return ctlDrive.getRightBumperButton(); }
     };
 
+    private static Button btnDrive_Boost = new Button() {
+        @Override public boolean get() { return ctlDrive.getLeftBumperButton(); }
+    };
+
     private static Button btnOperate_Bottom = new Button() {
         @Override public boolean get() { return ctlOperate.getLeftBumperButton(); }
     };
 
-    private static Button btnOperate_L1 = new Button() {
+    private static Button btnOperate_Elevator_L1 = new Button() {
         @Override public boolean get() { return ctlOperate.getAButton(); }
     };
 
-    private static Button btnOperate_L2 = new Button() {
-        @Override public boolean get() {return ctlOperate.getBButton(); }
+    private static Button btnOperate_Elevator_L2 = new Button() {
+        @Override public boolean get() { return ctlOperate.getBButton(); }
     };
 
-    private static Button btnOperate_L3 = new Button() {
-        @Override public boolean get() {return ctlOperate.getXButton(); }
+    private static Button btnOperate_Elevator_L3 = new Button() {
+        @Override public boolean get() { return ctlOperate.getXButton(); }
     };
 
-    private static Button btnOperate_L4 = new Button() {
-        @Override public boolean get() {return ctlOperate.getYButton(); }
+    private static Button btnOperate_Elevator_L4 = new Button() {
+        @Override public boolean get() { return ctlOperate.getYButton(); }
     };
 
     private static Button btnOperate_Dispense = new Button() {
-        @Override public boolean get() {return ctlOperate.getRightTrigger(); }
+        @Override public boolean get() { return ctlOperate.getRightTrigger(); }
     };
 
     private static Button btnOperate_ReverseDispense = new Button() {
-        @Override public boolean get() {return ctlOperate.getLeftTrigger(); }
+        @Override public boolean get() { return ctlOperate.getLeftTrigger(); }
     };
 
-    private static Button btnOperate_manualUp = new Button() {
+    private static Button btnOperate_Elevator_manualUp = new Button() {
         @Override public boolean get() { return ctlOperate.getPOV() == 0; }
     };
 
-    private static Button btnOperate_manualDown = new Button(){
+    private static Button btnOperate_Elevator_manualDown = new Button(){
         @Override public boolean get() { return ctlOperate.getPOV() == 180; }
     };
+
+    private static Button btnOperate_Winch_Up = new Button(){
+        @Override public boolean get() { return ctlOperate.getYButton(); }
+    };
+
+    private static Button btnOperate_Winch_Down = new Button(){
+        @Override public boolean get() { return ctlOperate.getAButton(); }
+    };
+
+    private static Button btnOperate_Roller_On = new Button(){
+        @Override public boolean get() { return ctlOperate.getLeftTrigger(); }
+    };
+
+    private static Button btnOperate_Roller_Reverse = new Button(){
+        @Override public boolean get() { return ctlOperate.getRightTrigger(); }
+    };
+
     public static void start(){
 
         ctlDrive.configYAxisInverted(true);
@@ -117,7 +139,7 @@ public class Teleoperated {
             value = value*value*value;
         }
 
-        return value*DRIVE_POWER;
+        return value * (btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66);
 
     }
 
@@ -127,11 +149,13 @@ public class Teleoperated {
 
     }
 
+    //FIXME Power Scale
     private static void setArcadeDrive(double throttle, double steering){
+        double scale = btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66;
 
         Chassis.setDrivePower(
-            MathUtil.clamp(throttle+steering, -DRIVE_POWER, DRIVE_POWER),
-            MathUtil.clamp(throttle-steering, -DRIVE_POWER, DRIVE_POWER)
+            MathUtil.clamp(throttle+steering, -scale, scale),
+            MathUtil.clamp(throttle-steering, -scale, scale)
             );
 
     }
@@ -151,6 +175,23 @@ public class Teleoperated {
             Chassis.setNeutralMode(NeutralModeValue.Coast);
         }
 
+        if (btnOperate_Roller_On.get()){
+            Algae_Mech.enableRoller();
+        }else if (btnOperate_Roller_Reverse.get()){
+            Algae_Mech.reverseRoller();
+        } else {
+            Algae_Mech.disableRoller();
+        }
+
+        if (btnOperate_Winch_Up.get()){
+            Algae_Mech.enableWhinch();
+        }else if (btnOperate_Winch_Down.get()){
+            Algae_Mech.reverseWinch();
+        } else {
+            Algae_Mech.disableWhinch();
+        }
+
+        /*
         if (btnOperate_Bottom.getPressed()){
             Manipulator.goToHeight(Manipulator.Position.Bottom.getHeight());
         }else if(btnOperate_L1.getPressed()){
@@ -172,10 +213,12 @@ public class Teleoperated {
         }else if(btnOperate_ReverseDispense.get()){
             Manipulator.reverseWheels();
         }
+        */
         
-    
+
         Chassis.periodic();
-        Manipulator.periodic();
+        //Manipulator.periodic();
+        Algae_Mech.periodic();
     
     }
 
