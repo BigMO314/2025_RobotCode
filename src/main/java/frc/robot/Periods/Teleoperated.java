@@ -152,12 +152,12 @@ public class Teleoperated {
     }
 
     //FIXME Power Scale
-    private static void setArcadeDrive(double throttle, double steering){
-        double scale = btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66;
+    private static void setArcadeDrive(double throttle, double steering, double scale){
+        double newScale = btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66;
 
         Chassis.setDrivePower(
-            MathUtil.clamp(throttle+steering, -scale, scale),
-            MathUtil.clamp(throttle-steering, -scale, scale)
+            MathUtil.clamp(throttle+steering, -newScale, newScale),
+            MathUtil.clamp(throttle-steering, -newScale, newScale)
             );
 
     }
