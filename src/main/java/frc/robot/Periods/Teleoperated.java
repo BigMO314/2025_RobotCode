@@ -9,11 +9,9 @@ import frc.molib.dashboard.DashboardOptionBase;
 import frc.molib.dashboard.DashboardSelector;
 import frc.molib.hid.XboxController;
 import frc.robot.Robot;
-import frc.robot.Subsystems.Algae_Mech;
 import frc.robot.Subsystems.Chassis;
 import frc.robot.Subsystems.Manipulator;
 
-@SuppressWarnings("unused")
 public class Teleoperated {
     
     public enum DriveStyle implements DashboardOptionBase {
@@ -48,71 +46,33 @@ public class Teleoperated {
 
     private static final DriveExponent mSelectedDriveExponent = DriveExponent.CUBED;
 
-    private static final double DRIVE_POWER = 0.75;
+    private static final double STANDARD_POWER = 0.75;
 
     private static final double PRECISION_POWER = 0.2;
+    private static final double BOOST_POWER = 0.9;
 
     private static XboxController ctlDrive = new XboxController(0);
-    private static XboxController ctlOperate = new XboxController(1);
 
+    //Driver Buttons
     private static Button btnDrive_Brake = new Button() {
         @Override public boolean get() { return ctlDrive.getRightBumperButton(); }
+    };
+
+    private static Button btnDrive_Precision = new Button() { 
+        @Override public boolean get() { return ctlDrive.getLeftTrigger(); }
     };
 
     private static Button btnDrive_Boost = new Button() {
         @Override public boolean get() { return ctlDrive.getLeftBumperButton(); }
     };
 
-    private static Button btnOperate_Bottom = new Button() {
-        @Override public boolean get() { return ctlOperate.getLeftBumperButton(); }
-    };
-
-    private static Button btnOperate_Elevator_L1 = new Button() {
-        @Override public boolean get() { return ctlOperate.getAButton(); }
-    };
-
-    private static Button btnOperate_Elevator_L2 = new Button() {
-        @Override public boolean get() { return ctlOperate.getBButton(); }
-    };
-
-    private static Button btnOperate_Elevator_L3 = new Button() {
-        @Override public boolean get() { return ctlOperate.getXButton(); }
-    };
-
-    private static Button btnOperate_Elevator_L4 = new Button() {
-        @Override public boolean get() { return ctlOperate.getYButton(); }
-    };
-
+    //Manipulator Buttons
     private static Button btnOperate_Dispense = new Button() {
-        @Override public boolean get() { return ctlOperate.getRightTrigger(); }
+        @Override public boolean get() { return ctlDrive.getBButton(); }
     };
 
     private static Button btnOperate_ReverseDispense = new Button() {
-        @Override public boolean get() { return ctlOperate.getLeftTrigger(); }
-    };
-
-    private static Button btnOperate_Elevator_manualUp = new Button() {
-        @Override public boolean get() { return ctlOperate.getPOV() == 0; }
-    };
-
-    private static Button btnOperate_Elevator_manualDown = new Button(){
-        @Override public boolean get() { return ctlOperate.getPOV() == 180; }
-    };
-
-    private static Button btnOperate_Winch_Up = new Button(){
-        @Override public boolean get() { return ctlOperate.getYButton(); }
-    };
-
-    private static Button btnOperate_Winch_Down = new Button(){
-        @Override public boolean get() { return ctlOperate.getAButton(); }
-    };
-
-    private static Button btnOperate_Roller_On = new Button(){
-        @Override public boolean get() { return ctlOperate.getLeftTrigger(); }
-    };
-
-    private static Button btnOperate_Roller_Reverse = new Button(){
-        @Override public boolean get() { return ctlOperate.getRightTrigger(); }
+        @Override public boolean get() { return ctlDrive.getXButton(); }
     };
 
     public static void start(){
@@ -136,12 +96,12 @@ public class Teleoperated {
     public static double processDriverInput(double value, double scale){
 
         if(mSelectedDriveExponent == DriveExponent.SQUARED){
-            value = value*value*Math.signum(value);
+            value = value * value * Math.signum(value);
         }else if(mSelectedDriveExponent == DriveExponent.CUBED){
-            value = value*value*value;
+            value = value * value*value;
         }
 
-        return value * (btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66);
+        return value * scale;
 
     }
 
@@ -151,19 +111,21 @@ public class Teleoperated {
 
     }
 
-    //FIXME Power Scale
     private static void setArcadeDrive(double throttle, double steering, double scale){
-        double newScale = btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66;
+        //double newScale = btnDrive_Boost.get() ? DRIVE_POWER : DRIVE_POWER * 0.66;
 
         Chassis.setDrivePower(
-            MathUtil.clamp(throttle+steering, -newScale, newScale),
-            MathUtil.clamp(throttle-steering, -newScale, newScale)
-            );
+            MathUtil.clamp(throttle+steering, -scale, scale),
+            MathUtil.clamp(throttle-steering, -scale, scale)
+        );
 
     }
 
     public static void periodic(){
-        double drivePower = btnDrive_Brake.get() ? PRECISION_POWER : DRIVE_POWER;
+        double drivePower;
+        if(btnDrive_Precision.get()) drivePower = PRECISION_POWER;
+        else if(btnDrive_Boost.get()) drivePower = BOOST_POWER;
+        else drivePower = STANDARD_POWER;
 
         if(mSelectedDriveStyle == DriveStyle.TANK_DRIVE){
             setTankDrive(processDriverInput(ctlDrive.getLeftY(), drivePower), processDriverInput(ctlDrive.getRightY(), drivePower), drivePower);
@@ -179,50 +141,17 @@ public class Teleoperated {
             Chassis.setNeutralMode(NeutralModeValue.Coast);
         }
 
-        if (btnOperate_Roller_On.get()){
-            Algae_Mech.enableRoller();
-        }else if (btnOperate_Roller_Reverse.get()){
-            Algae_Mech.reverseRoller();
-        } else {
-            Algae_Mech.disableRoller();
+        //Manipulator Controls
+        if(btnOperate_Dispense.get()){
+            Manipulator.enableRoller();
+        }else if (btnOperate_ReverseDispense.get()){
+            Manipulator.reverseRoller();
+        }else {
+            Manipulator.disableRoller();
         }
-
-        if (btnOperate_Winch_Up.get()){
-            Algae_Mech.enableWhinch();
-        }else if (btnOperate_Winch_Down.get()){
-            Algae_Mech.reverseWinch();
-        } else {
-            Algae_Mech.disableWhinch();
-        }
-
-        /*
-        if (btnOperate_Bottom.getPressed()){
-            Manipulator.goToHeight(Manipulator.Position.Bottom.getHeight());
-        }else if(btnOperate_L1.getPressed()){
-            Manipulator.goToHeight(Manipulator.Position.L1.getHeight());
-        }else if(btnOperate_L2.getPressed()){
-            Manipulator.goToHeight(Manipulator.Position.L2.getHeight());
-        }else if(btnOperate_L3.getPressed()){
-            Manipulator.goToHeight(Manipulator.Position.L3.getHeight());
-        }else if(btnOperate_L4.getPressed()){
-            Manipulator.goToHeight(Manipulator.Position.L4.getHeight());
-        }else if(btnOperate_manualUp.get()){
-            Manipulator.disableElevatorPID();
-            Manipulator.raiseElevator();
-        }else if(btnOperate_manualDown.get()){
-            Manipulator.disableElevatorPID();
-            Manipulator.lowerElevator();
-        }else if(btnOperate_Dispense.get()){
-            Manipulator.enableWheels();
-        }else if(btnOperate_ReverseDispense.get()){
-            Manipulator.reverseWheels();
-        }
-        */
-        
 
         Chassis.periodic();
-        //Manipulator.periodic();
-        Algae_Mech.periodic();
+        Manipulator.periodic();
     
     }
 

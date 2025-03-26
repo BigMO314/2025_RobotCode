@@ -17,7 +17,6 @@ import frc.robot.Periods.Autonomous;
 import frc.robot.Periods.Disabled;
 import frc.robot.Periods.Teleoperated;
 import frc.robot.Periods.Test;
-import frc.robot.Subsystems.Algae_Mech;
 import frc.robot.Subsystems.Chassis;
 import frc.robot.Subsystems.Manipulator;
 
@@ -61,8 +60,7 @@ public class Robot extends TimedRobot {
         }
 
         Chassis.init();
-       //Manipulator.init();
-       Algae_Mech.init();
+        Manipulator.init();
 
         Autonomous.init();
         Teleoperated.init();
@@ -73,7 +71,7 @@ public class Robot extends TimedRobot {
 
     public static void disableSubsystems(){
 
-        //Manipulator.disable();
+        Manipulator.disable();
         Chassis.disable();
 
     }
@@ -84,7 +82,7 @@ public class Robot extends TimedRobot {
         Managers.update();
     
         Chassis.syncDashboardValues();
-       
+        Manipulator.syncDashboardValues();
         
     }
 
@@ -110,12 +108,17 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        Disabled.init();
+        Disabled.start();
     }
 
     @Override
     public void disabledPeriodic() {
         Disabled.periodic();
+    }
+
+    @Override
+    public void disabledExit() {
+        Disabled.end();
     }
 
     @Override

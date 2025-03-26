@@ -47,16 +47,16 @@ public class Chassis {
     private static ADXRS450_Gyro gyrDrive = new ADXRS450_Gyro();
 
     //PID Controllers
-    private static PIDController pidDriveDistance = new PIDController(0, 0, 0);
-    private static PIDController pidDriveAngle = new PIDController(0, 0, 0);
+    private static PIDController pidDriveDistance = new PIDController(0.05, 0.0, 0.002);
+    private static PIDController pidDriveAngle = new PIDController(0.03, 0.0, 0.002);
 
     //Constants
     private static final double WHEEL_DIAMETER = 4.0;
-    private static final double GEAR_RATIO = 1/6;
+    private static final double GEAR_RATIO = 1.0 / 6.0;
 
     //Power Buffer Variables
-    private static double mLeftPower;
-    private static double mRightPower;
+    private static double mLeftPower = 0.0;
+    private static double mRightPower = 0.0;
 
     /**Unused Contructor */
     private Chassis(){}
@@ -95,6 +95,15 @@ public class Chassis {
         dshDrive_Angle_P.set(pidDriveAngle.getP());
         dshDrive_Angle_I.set(pidDriveAngle.getI());
         dshDrive_Angle_D.set(pidDriveAngle.getD());
+
+        pidDriveAngle.setTolerance(2.5);
+        pidDriveDistance.setTolerance(0.5);
+
+        pidDriveAngle.configOutputRange(-0.25, 0.25);
+        pidDriveDistance.configOutputRange(-0.25, 0.25);
+
+        pidDriveAngle.configAtSetpointTime(0.25);
+        pidDriveDistance.configAtSetpointTime(0.25);
     
         Console.logMsg("Chassis Initialization Complete!");
     }
@@ -109,6 +118,12 @@ public class Chassis {
         pidDriveAngle.setP(dshDrive_Angle_P.get());
         pidDriveAngle.setI(dshDrive_Angle_I.get());
         pidDriveAngle.setD(dshDrive_Angle_D.get());
+
+        dshDrive_Angle.set(getAngle());
+        dshDrive_Distance.set(getDistance());
+
+        dshDrive_Angle_OnTarget.set(pidDriveAngle.atSetpoint());
+        dshDrive_Distance_OnTarget.set(pidDriveDistance.atSetpoint());
 
     }
 
@@ -204,9 +219,7 @@ public class Chassis {
         if(pidDriveDistance.isEnabled()){
             double power = pidDriveDistance.calculate(getDistance());
             setDrivePower(power, power);
-        }
-        else
-        if(pidDriveAngle.isEnabled()){
+        } else if(pidDriveAngle.isEnabled()){
             double power = pidDriveAngle.calculate(getAngle());
             setDrivePower(power, -power);
         }

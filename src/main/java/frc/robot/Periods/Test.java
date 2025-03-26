@@ -13,63 +13,53 @@ public class Test {
 
     private static NetworkTable tbl_Test = Robot.tblPeriods.getSubTable("Test");
 
-    private static DashboardValue<Double> dshElevatorHeight = new DashboardValue<Double>(tbl_Test, "Height");
-
     private Test() {}
 
     private static XboxController ctlTest = new XboxController(0);
 
+    private static Button btnTest_ResetDistance = new Button() {
+        @Override public boolean get() { return ctlTest.getStartButton(); }
+    };
+
+    private static Button btnTest_ResetAngle = new Button() {
+        @Override public boolean get() { return ctlTest.getBackButton(); }
+    };
+
     private static Button btnTest_forward12 = new Button(){
 
-        @Override public boolean get() { return ctlTest.getLeftBumperButtonPressed(); }
+        @Override public boolean get() { return ctlTest.getAButton(); }
 
     };
 
-    private static Button btnTest_right90 = new Button(){
+    private static Button btnTest_forward48 = new Button(){
 
-        @Override public boolean get() { return ctlTest.getRightBumperButtonPressed(); }
-
-    };
-
-    private static Button btnTest_Bottom = new Button(){
-
-        @Override public boolean get() { return ctlTest.getPOV() == 180; }
+        @Override public boolean get() { return ctlTest.getBButton(); }
 
     };
 
-    private static Button btnTest_L1 = new Button(){
-
-        @Override public boolean get() { return ctlTest.getAButtonPressed(); }
-
-    };
-
-    private static Button btnTest_L2 = new Button(){
-
-        @Override public boolean get() { return ctlTest.getBButtonPressed(); }
-
-    };
-
-    private static Button btnTest_L3 = new Button() {
-
-        @Override public boolean get() { return ctlTest.getXButtonPressed(); }
-
-    };
-
-    public static Button btnTest_L4 = new Button() {
+    private static Button btnTest_reverse48 = new Button(){
 
         @Override public boolean get() { return ctlTest.getYButton(); }
 
     };
 
-    public static Button btnTest_goToDashboard = new Button() {
+    private static Button btnTest_right = new Button(){
 
-        @Override public boolean get() { return ctlTest.getPOV() == 0.00; }
+        @Override public boolean get() { return ctlTest.getRightBumperButton(); }
 
     };
 
-    public static void init() {
+    private static Button btnTest_left = new Button(){
 
-        dshElevatorHeight.set(0.0);
+        @Override public boolean get() { return ctlTest.getLeftBumperButton(); }
+
+    };
+
+    private static Button btnTest_DisablePIDs = new Button() {
+        @Override public boolean get() { return ctlTest.getXButton(); }
+    };
+
+    public static void init() {
 
     }
 
@@ -81,14 +71,35 @@ public class Test {
 
     public static void periodic() {
 
-        if (btnTest_forward12.getPressed()){ Chassis.goToDistance(12.00); }
-        else if (btnTest_right90.getPressed()){ Chassis.goToAngle(90.00); }
-        else if (btnTest_Bottom.getPressed()){ Manipulator.goToHeight(Manipulator.Position.Bottom.getHeight()); }
-        else if (btnTest_L1.getPressed()){ Manipulator.goToHeight(Manipulator.Position.L1.getHeight()); }
-        else if (btnTest_L2.getPressed()){ Manipulator.goToHeight(Manipulator.Position.L2.getHeight()); }
-        else if (btnTest_L3.getPressed()){ Manipulator.goToHeight(Manipulator.Position.L3.getHeight()); }
-        else if (btnTest_L4.getPressed()){ Manipulator.goToHeight(Manipulator.Position.L4.getHeight()); }
-        else if (btnTest_goToDashboard.getPressed()){ Manipulator.goToHeight(dshElevatorHeight.get()); }
+        if (btnTest_forward12.getPressed()){
+            Chassis.disableAnglePID(); 
+            Chassis.resetDistance();
+            Chassis.goToDistance(12.00); 
+        } else if (btnTest_forward48.getPressed()){ 
+            Chassis.disableAnglePID(); 
+            Chassis.resetDistance();
+            Chassis.goToDistance(48.00); 
+        } else if (btnTest_reverse48.getPressed()){ 
+            Chassis.disableAnglePID(); 
+            Chassis.resetDistance();
+            Chassis.goToDistance(-48.00); 
+        } else if (btnTest_right.getPressed()){
+            Chassis.disableDistancePID(); 
+            Chassis.resetAngle();
+            Chassis.goToAngle(90.00); 
+        } else if (btnTest_left.getPressed()){ 
+            Chassis.disableDistancePID(); 
+            Chassis.resetAngle();
+            Chassis.goToAngle(-180.00);
+        }
+
+        if(btnTest_ResetAngle.getPressed()) Chassis.resetAngle();
+        if(btnTest_ResetDistance.getPressed()) Chassis.resetDistance();
+
+        if(btnTest_DisablePIDs.getPressed()) Chassis.disablePIDs();
+
+        Chassis.periodic();
+        Manipulator.periodic();
 
     }
     
